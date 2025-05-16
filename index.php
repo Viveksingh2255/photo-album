@@ -1,17 +1,12 @@
 <?php
-// Start session for flash messages
 session_start();
-
-// Define constants
 define('UPLOAD_DIR', 'images/');
 define('IMAGES_PER_PAGE', 6);
 
-// Create upload directory if it doesn't exist
 if (!file_exists(UPLOAD_DIR)) {
     mkdir(UPLOAD_DIR, 0777, true);
 }
 
-// Handle image upload
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image'])) {
     $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
     $maxFileSize = 5 * 1024 * 1024; // 5MB
@@ -19,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image'])) {
     $file = $_FILES['image'];
     $error = null;
     
-    // Validate file
+   
     if ($file['error'] !== UPLOAD_ERR_OK) {
         $error = 'Upload failed with error code: ' . $file['error'];
     } elseif (!in_array($file['type'], $allowedTypes)) {
@@ -27,15 +22,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image'])) {
     } elseif ($file['size'] > $maxFileSize) {
         $error = 'File size exceeds the maximum limit of 5MB';
     } else {
-        // Generate unique filename
+      
         $filename = uniqid() . '_' . basename($file['name']);
         $destination = UPLOAD_DIR . $filename;
-        
-        // Move uploaded file
         if (move_uploaded_file($file['tmp_name'], $destination)) {
             $_SESSION['success'] = 'Image uploaded successfully';
-            
-            // If AJAX request, return JSON response
             if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
                 $imageInfo = getimagesize($destination);
                 $response = [
@@ -57,8 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image'])) {
     
     if ($error) {
         $_SESSION['error'] = $error;
-        
-        // If AJAX request, return JSON response
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
             $response = [
                 'success' => false,
@@ -69,15 +58,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image'])) {
             exit;
         }
     }
-    
-    // Redirect to prevent form resubmission if not AJAX
     if (!isset($_SERVER['HTTP_X_REQUESTED_WITH']) || $_SERVER['HTTP_X_REQUESTED_WITH'] !== 'XMLHttpRequest') {
         header('Location: ' . $_SERVER['PHP_SELF']);
         exit;
     }
 }
-
-// Get all images
 $images = [];
 if (file_exists(UPLOAD_DIR) && is_dir(UPLOAD_DIR)) {
     $files = scandir(UPLOAD_DIR);
@@ -86,18 +71,15 @@ if (file_exists(UPLOAD_DIR) && is_dir(UPLOAD_DIR)) {
             $images[] = $file;
         }
     }
-    // Sort images by newest first (assuming filename has timestamp component)
     rsort($images);
 }
 
-// Pagination
 $totalImages = count($images);
 $totalPages = ceil($totalImages / IMAGES_PER_PAGE);
 $currentPage = isset($_GET['page']) ? max(1, min($totalPages, intval($_GET['page']))) : 1;
 $startIndex = ($currentPage - 1) * IMAGES_PER_PAGE;
 $currentImages = array_slice($images, $startIndex, IMAGES_PER_PAGE);
 
-// Function to determine if image is portrait or landscape
 function isPortrait($imagePath) {
     $imageInfo = getimagesize($imagePath);
     return $imageInfo[1] > $imageInfo[0]; // height > width
@@ -145,7 +127,6 @@ function isPortrait($imagePath) {
         <main>
             <div class="album-container">
                 <?php 
-                // Process images in pairs (left and right pages)
                 for ($i = 0; $i < count($currentImages); $i += 6) {
                     // Get up to 6 images for one spread (3 left, 3 right)
                     $spreadImages = array_slice($currentImages, $i, 6);
@@ -154,7 +135,7 @@ function isPortrait($imagePath) {
                 <div class="book-spread">
                     <div class="album-column">
                         <?php 
-                        // Left page - first 3 images
+                    
                         for ($j = 0; $j < min(3, count($spreadImages)); $j++) {
                             $image = $spreadImages[$j];
                             $imagePath = UPLOAD_DIR . $image;
@@ -168,7 +149,7 @@ function isPortrait($imagePath) {
                     
                     <div class="album-column">
                         <?php 
-                        // Right page - next 3 images
+                      
                         for ($j = 3; $j < min(6, count($spreadImages)); $j++) {
                             $image = $spreadImages[$j];
                             $imagePath = UPLOAD_DIR . $image;
