@@ -1,0 +1,70 @@
+# Photo Album Web Application
+
+This web application allows users to upload images in real-time and displays them in a layout with 6 images per page—3 on the left side and 3 on the right side. The application adjusts automatically for both horizontal and vertical images.
+
+## Features
+
+- Real-time image upload without page refresh
+- 3x2 layout (3 images on the left, 3 on the right)
+- Automatic adjustment for portrait and landscape images
+- Pagination to navigate through multiple pages of images
+- Responsive design for both desktop and mobile devices
+- Input validation for image uploads (file type, size)
+
+## Installation
+
+1. Ensure you have a web server with PHP (version 7.0 or higher) installed
+2. Clone or download this repository to your web server's document root or a subdirectory
+3. Make sure the `images/` directory is writable by the web server
+   ```
+   chmod 777 images/
+   ```
+4. Access the application through your web browser (e.g., `http://localhost/photo-album/`)
+
+## Project Structure
+
+```
+photo-album/
+├── index.php       
+├── style.css       
+├── script.js       
+└── images/         
+```
+
+## How to Use
+
+### Uploading Images
+
+1. Click on the "Choose an image" button
+2. Select an image from your device (supported formats: JPG, JPEG, PNG)
+3. Click the "Upload" button
+4. The image will be uploaded and displayed in real-time without page refresh
+
+### Navigating Through Pages
+
+- Use the "Previous" and "Next" buttons to navigate through pages of images
+- Each page displays up to 6 images (3 on each side)
+
+## Technical Details
+
+- The application uses PHP for server-side processing and image storage
+- JavaScript (AJAX) is used for real-time image uploads without page refresh
+- CSS is used for responsive layout and styling
+- Images are stored in the `images/` directory with unique filenames
+- The application validates image file types (.jpg, .jpeg, .png) and size (max 5MB)
+
+## Limitations
+
+- Only .jpg, .jpeg, and .png image formats are supported
+- Maximum file size is set to 5MB
+- No image editing or resizing functionality
+
+## Troubleshooting
+
+If you encounter any issues:
+
+1. Make sure the `images/` directory exists and is writable by the web server
+2. Check that PHP is properly installed and configured on your web server
+3. Ensure your web server supports file uploads and the upload_max_filesize in php.ini is sufficient
+
+
